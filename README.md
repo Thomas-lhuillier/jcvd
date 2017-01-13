@@ -1,5 +1,5 @@
 To install run
-	npm install twitt
+	npm install twit
 
 set your proper config variables, as environnement variable or not.
 
