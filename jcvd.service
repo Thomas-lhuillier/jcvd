@@ -1,0 +1,14 @@
+[Unit]
+Description=Bot_JCVD
+
+[Service]
+ExecStart=~/jcvd/jcvd.js
+Restart=always
+User=nobody
+Group=nobody
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=~/jcvd
+
+[Install]
+WantedBy=multi-user.target
