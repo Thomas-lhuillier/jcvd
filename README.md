@@ -1,7 +1,15 @@
-To install, run :
-	npm install twit
+## Installation
+```
+npm install twit
+npm install moment
+```
+Then edit the config.js file to set your credentials for the twitter API to work.
 
-Then set your proper config variables, as environnement variable or not.
+## launch our script
+```
+node jcvd.js
+```
 
-To launch our script, run :
-	node jcvd.js
+On a server, you can use Forever to run the script permanently.  
+`forever start -w jcvd.js` to start the script, -w to watch for file changes.  
+`forever list` to see running processes informations.  
