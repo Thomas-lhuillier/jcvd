@@ -13,7 +13,7 @@ module.exports = [
   // "Quand on sort d'un placenta à l'age de 42 ans et quand on a l'intelligence, le brain, le computer, la mémoire d'un 40 ans mais qui est vide, elle doit se remplir de jour en jour, elle doit sponging, elle doit elle doit prendre comme une éponge, elle doit elle doit... ok ?",
   // "L'être humain, en général, dans la vie, réacte. On réacte, c'est à dire qu'on fait ce qu'on est supposé faire. Travailler, manger... J'm'excuse de l'expression; chier, mais je trouve qu'un être humain doit créer.",
   // "Une vache, ça te bouffe trois hectares, moi avec trois hectares, je te fais deux mille kilos de riz. Avec trois hectares, je te nourris Avignon tu vois",
-  "Quand j'étais jeune j'étais très con. Je suis restée très jeune.",
+  "Quand j'étais jeune j'étais très con. Je suis resté très jeune.",
   "Le talent, ça se travaille, mais ça ne se perd pas.",
   "Si tu dis couic-couic quand tu marches, les gens pensent que t'as des chaussures neuves.",
   "Un bon truc pour paraître dix ans plus jeune, c'est de te vieillir de dix ans quand tu dis ton âge.",
