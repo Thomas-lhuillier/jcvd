@@ -1,6 +1,3 @@
-// @TODO ne pas cibler les retweets, du moins ceux dont je suis l'original.
-
-
 // Our twitter connection informations :
 const config = require('./config.js');
 
