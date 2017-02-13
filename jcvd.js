@@ -101,7 +101,7 @@ stream.on('tweet', (tweet) => {
     if (is_string_matched) {
       // Tweet.
       //send_tweet(response, tweet.id_str);
-      log[tweet.user.id] = new Date().getTime();
+      log[tweet.user.id] = Math.floor(Date.now() / 1000);
       save_json(log);
       console.log(response);
     } else {
