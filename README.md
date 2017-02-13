@@ -1,7 +1,6 @@
 ## Installation
 ```
-npm install twit
-npm install moment
+npm install
 ```
 Then edit the config.js file to set your credentials for the twitter API to work.
 
