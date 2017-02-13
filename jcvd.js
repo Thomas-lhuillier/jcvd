@@ -1,13 +1,24 @@
 // Our twitter connection informations :
 const config = require('./config.js');
+const fs = require('fs');
 
 // The sentences our bot will say :
 const citations = require('./citations.js');
+const log = {};
+
+// Previously, in JCVD BOT
+try {
+  const log = require( "./log.json" )
+}
+catch (e) {
+  console.log('Pas encore de fichier de log');
+}
+
 
 var Twitter;
 var stream;
 // The strings we'll be tracking :
-const search = ['aware', 'Aware', 'AWARE'];
+const search = ['aware', 'Aware', 'AWARE', 'love', 'Love', 'LOVE'];
 
 // Initialize twitter streaming.
 (function init_JCVD() {
@@ -29,6 +40,15 @@ function send_tweet(text, original_tweet_id) {
   });
 }
 
+function save_json(text){
+  console.log(text);
+  let json = JSON.stringify(text);
+  fs.writeFile("log.json", json, (err) => {
+    if (err) throw err;
+  console.log('JSON updated');
+});
+}
+
 stream.on('error', (err) => {
   console.log('Error : streaming error -> ', err);
 });
@@ -44,6 +64,12 @@ stream.on('tweet', (tweet) => {
   // Do not retweet if original tweet is from me.
   if ( tweet.user.id == config.id ) {
     console.log('Aborting: original tweet is our. :(');
+    return;
+  }
+
+  // Do not retweet if already responded this user
+  if (log[tweet.user.id] != undefined) {
+    console.log('Aborting: already responded to this guy');
     return;
   }
 
@@ -74,8 +100,9 @@ stream.on('tweet', (tweet) => {
 
     if (is_string_matched) {
       // Tweet.
-      send_tweet(response, tweet.id_str);
-
+      //send_tweet(response, tweet.id_str);
+      log[tweet.user.id] = new Date().getTime();
+      save_json(log);
       console.log(response);
     } else {
       console.log('Aborting: Tweet did not strictly contained a searched word.');
