@@ -1,12 +1,16 @@
 ## Installation
-```
+```bash
+# Install dependencies.
 npm install
+# Create a config file and fill it with your twitter API credentials.
+cp config/config.sample.js config/config.js
+# Create the logs folder.
+mkdir logs
 ```
-Duplicate and fill config.sample.js file to set your twitter API credentials.
 
 ## launch our script
 ```
-node jcvd.js
+node jcvd
 ```
 
 On a server, you can use Forever to run the script permanently.
