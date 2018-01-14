@@ -1,37 +1,93 @@
-// Our twitter connection informations :
-const config = require('./config.js');
-const fs = require('fs');
 
-// The sentences our bot will say :
-const citations = require('./citations.js');
-const log = {};
+const config = require('./config/config.js'); // Our twitter connection informations
+const citations = require('./config/citations.js'); // The sentences our bot will say
 
-// Previously, in JCVD BOT
-try {
-  const log = require( "./log.json" )
-}
-catch (e) {
-  console.log('Pas encore de fichier de log');
-}
+// Start logger
+const JsonLogger = require('./JsonLogger');
+const logger = new JsonLogger('./logs/log.json', 30); // clears entries older that 30 days
 
+// Init a connection to Twitter and listen to stream
+const Twit = require('twit');
+const Twitter = new Twit(config);
+const search = ['aware', 'Aware', 'AWARE', 'love']; // The strings we'll be tracking
+const stream = Twitter.stream('statuses/filter', {
+  track: search,
+  language: 'fr',
+});
 
-var Twitter;
-var stream;
-// The strings we'll be tracking :
-const search = ['aware', 'Aware', 'AWARE', 'love', 'Love', 'LOVE'];
+stream.on('error', (err) => {
+  console.log('Error :', err);
+});
 
-// Initialize twitter streaming.
-(function init_JCVD() {
-  console.log('Starting JCVD...')
-  const twit = require('twit');
-  Twitter = new twit(config);
-  stream = Twitter.stream('statuses/filter', { track: search, language: 'fr' });
-})();
+stream.on('tweet', (tweet) => {
+  // @TODO cut in two sections, getTweet and createResponse
+  if (!citations.length) {
+    console.log('Error : No citation provided.');
+  }
 
-function send_tweet(text, original_tweet_id) {
+  let date = Math.floor(Date.now() / 1000);
+  let userId = tweet.user.id;
+
+  // Do not retweet if original tweet is from me.
+  if ( tweet.user.id == config.id ) {
+    return;
+  }
+
+  // Do not retweet if we already responded to this user.
+  let log = logger.getData();
+  if (log.data[tweet.user.id] != undefined) {
+    return;
+  }
+
+  // Check if tweet strictly contains a least one word of our search, else abort.
+  // Sometimes the stream can send related post else abort.
+  let isStringMatched = false;
+  let length = search.length;
+  while (length--) {
+    if (tweet.text.indexOf(search[length]) != -1 ) {
+      isStringMatched = true;
+    }
+  }
+  if (!isStringMatched) {
+    return;
+  }
+
+  // @TODO improve bot, trying to provide a sentence related to the user's twit (contains same words ?).
+  // Find a sentence that allow '@username ' + sentence <= 140 chars. twit limit
+  // let prefix = '@' + tweet.user.screen_name+' ';
+  let suffix = ' @' + tweet.user.screen_name;
+  let response = false;
+  while (!response) {
+    let tempSentence = citations[Math.floor(Math.random() * citations.length)];
+    let tempResponse = tempSentence + suffix;
+    if ( tempResponse.length > 140 ) {
+      continue;
+    } else {
+      response = tempResponse;
+    }
+  }
+
+  // Max out twit frenquency to 30min max
+  // @TODO make those functions async.
+  let timeSinceLastTwit = logger.getTimeSinceLastEntry();
+  if ( timeSinceLastTwit === null || timeSinceLastTwit > (1800000 / 3)) { // 1800000ms = 30min
+    // Tweet.
+    sendTweet(response, tweet.id_str);
+    logger.addRecord(userId, date);
+    console.log('__________');
+    console.log(tweet.text);
+    console.log(response);
+  }
+});
+
+/**
+ * @param {string} text
+ * @param {int} originalTweetID
+ */
+function sendTweet(text, originalTweetID) {
   Twitter.post('statuses/update', {
     status: text,
-    in_reply_to_status_id: original_tweet_id
+    in_reply_to_status_id: originalTweetID,
   }, function(err, data, response) {
     if (err) {
       console.log(err);
@@ -39,75 +95,3 @@ function send_tweet(text, original_tweet_id) {
     }
   });
 }
-
-function save_json(text){
-  console.log(text);
-  let json = JSON.stringify(text);
-  fs.writeFile("log.json", json, (err) => {
-    if (err) throw err;
-  console.log('JSON updated');
-});
-}
-
-stream.on('error', (err) => {
-  console.log('Error : streaming error -> ', err);
-});
-
-stream.on('tweet', (tweet) => {
-  console.log('__________');
-  let time = new Date();
-  console.log(time);
-  console.log(tweet.user.screen_name);
-  console.log(tweet.text);
-  // console.log(tweet);
-
-  // Do not retweet if original tweet is from me.
-  if ( tweet.user.id == config.id ) {
-    console.log('Aborting: original tweet is our. :(');
-    return;
-  }
-
-  // Do not retweet if already responded this user
-  if (log[tweet.user.id] != undefined) {
-    console.log('Aborting: already responded to this guy');
-    return;
-  }
-
-  let response = false;
-  //let prefix = '@'+tweet.user.screen_name+' ';
-  let suffix = ' @' + tweet.user.screen_name;
-  let available_length = 140 - suffix.length;
-
-  if (citations.length) {
-    // Find a sentence that allow '@name sentence' <= 140 char.
-    while (!response) {
-      let temp_sentence = citations[Math.floor(Math.random() * citations.length)];
-      let temp_response = temp_sentence + suffix;
-      if ( temp_response.length > 140 ) {
-        continue;
-      } else {
-        response = temp_response;
-      }
-    }
-
-    let length = search.length;
-    let is_string_matched = false;
-
-    // Check if tweet strictly contains a least one word of our search
-    while (length--) {
-      if ( tweet.text.indexOf(search[length]) != -1 ) { is_string_matched = true; }
-    }
-
-    if (is_string_matched) {
-      // Tweet.
-      //send_tweet(response, tweet.id_str);
-      log[tweet.user.id] = Math.floor(Date.now() / 1000);
-      save_json(log);
-      console.log(response);
-    } else {
-      console.log('Aborting: Tweet did not strictly contained a searched word.');
-    }
-  } else {
-    console.log('Error : No citation provided.');
-  }
-});

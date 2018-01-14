@@ -1,5 +1,10 @@
+# Project files
+config/config.js
+logs/log.json
+
+# Dependencies
 node_modules/
+
+# IDE
 *.sublime-project
 *.sublime-workspace
-env.js
-log.json
