@@ -1,6 +1,6 @@
 # Project files
 config/config.js
-logs/log.json
+logs/*
 
 # Dependencies
 node_modules/

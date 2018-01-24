@@ -39,7 +39,7 @@ module.exports = class JsonLogger {
       });
     }
 
-    if (maxDays) {
+    if (this.maxDays) {
       this.startCleanerJob();
     }
   }
@@ -88,7 +88,7 @@ module.exports = class JsonLogger {
    * @param {int} maxDays
    */
   clean(maxDays) {
-    let log = JSON.parse(getData());
+    let log = this.getData();
     for (let key of log.data) {
       let diff = (Date.now() - log.data[key]) / (1000 * 60 * 60 * 24); // Get date diff in days.
       if (diff > maxDays) {

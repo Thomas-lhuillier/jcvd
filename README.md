@@ -1,14 +1,31 @@
 ## Installation
 ```
-npm install
+# Install dependencies
+$ npm install
+# Create log folder
+$ mkdir logs
 ```
 Duplicate and fill config.sample.js file to set your twitter API credentials.
 
-## launch our script
+## Launch the app
 ```
-node jcvd.js
+$ node jcvd.js
 ```
 
-On a server, you can use Forever to run the script permanently.
-`forever start -w jcvd.js` to start the script, -w to watch for file changes.
-`forever list` to see running processes informations.
+## Running it on a server
+On a server, you can use pm2 to run the script and keep it alive permanently.
+
+### Install pm2
+```
+$ npm install pm2 -g
+```
+
+### Start jcvd
+```
+$ npm run start
+```
+
+### Stop jcvd
+```
+$ npm run stop
+```

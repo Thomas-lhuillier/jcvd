@@ -9,7 +9,7 @@ const logger = new JsonLogger('./logs/log.json', 30); // clears entries older th
 // Init a connection to Twitter and listen to stream
 const Twit = require('twit');
 const Twitter = new Twit(config);
-const search = ['aware', 'Aware', 'AWARE', 'love']; // The strings we'll be tracking
+const search = ['aware', 'Aware', 'AWARE']; // The strings we'll be tracking
 const stream = Twitter.stream('statuses/filter', {
   track: search,
   language: 'fr',
