@@ -1,9 +1,9 @@
 
-const config = require('./config/config.js'); // Our twitter connection informations
-const citations = require('./config/citations.js'); // The sentences our bot will say
+const config = require('./config/config'); // Our twitter connection informations
+const citations = require('./config/citations'); // The sentences our bot will say
 
 // Start logger
-const JsonLogger = require('./JsonLogger');
+const JsonLogger = require('./jsonLogger');
 const logger = new JsonLogger('./logs/log.json', 30); // clears entries older that 30 days
 
 // Init a connection to Twitter and listen to stream
