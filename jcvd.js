@@ -20,6 +20,8 @@ stream.on('error', (err) => {
 });
 
 stream.on('tweet', (tweet) => {
+  console.log(logger.getTimeSinceLastEntry());
+  // return;
   // @TODO cut in two sections, getTweet and createResponse
   if (!citations.length) {
     console.log('Error : No citation provided.');
@@ -27,6 +29,8 @@ stream.on('tweet', (tweet) => {
 
   let date = Math.floor(Date.now() / 1000);
   let userId = tweet.user.id;
+  console.log('usrId:', userId);
+  console.log('text:', tweet.text);
 
   // Do not retweet if original tweet is from me.
   if ( tweet.user.id == config.id ) {
@@ -35,7 +39,7 @@ stream.on('tweet', (tweet) => {
 
   // Do not retweet if we already responded to this user.
   let log = logger.getData();
-  if (log.data[tweet.user.id] != undefined) {
+  if (typeof log.data[tweet.user.id] !== 'undefined') {
     return;
   }
 
@@ -53,7 +57,7 @@ stream.on('tweet', (tweet) => {
   }
 
   // @TODO improve bot, trying to provide a sentence related to the user's twit (contains same words ?).
-  // Find a sentence that allow '@username ' + sentence <= 140 chars. twit limit
+  // Find a sentence that allow '@username ' + sentence <= 140 chars. twit limitge
   // let prefix = '@' + tweet.user.screen_name+' ';
   let suffix = ' @' + tweet.user.screen_name;
   let response = false;
@@ -70,9 +74,10 @@ stream.on('tweet', (tweet) => {
   // Max out twit frenquency to 30min max
   // @TODO make those functions async.
   let timeSinceLastTwit = logger.getTimeSinceLastEntry();
-  if ( timeSinceLastTwit === null || timeSinceLastTwit > (1800000 / 3)) { // 1800000ms = 30min
+  if ( timeSinceLastTwit === null || timeSinceLastTwit > (1800000)) { // 1800000ms = 30min
     // Tweet.
     sendTweet(response, tweet.id_str);
+    console.log('sendtweet');
     logger.addRecord(userId, date);
     console.log('__________');
     console.log(tweet.text);

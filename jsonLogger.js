@@ -34,8 +34,6 @@ module.exports = class JsonLogger {
         if (err) {
           throw err;
         }
-
-        this.jsonfile = require(logFilePath);
       });
     }
 
